@@ -1,0 +1,189 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Launcher.Views.ServerLauncherView"
+             Background="#1e1e1e"
+             Foreground="#ffffff">
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="20" Gap="15">
+        
+        <!-- Header -->
+        <StackPanel Orientation="Vertical" Gap="10">
+            <TextBlock Text="Sanctuary Server Launcher" 
+                       FontSize="24" 
+                       FontWeight="Bold" 
+                       Foreground="#667eea"/>
+            <TextBlock x:Name="StatusText" 
+                       Text="{Binding Status}" 
+                       FontSize="14" 
+                       Foreground="#888"/>
+        </StackPanel>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,*" Gap="20">
+            
+            <!-- Left Column: Controls -->
+            <StackPanel Orientation="Vertical" Gap="15">
+                
+                <!-- Download Section -->
+                <Border Background="#2d2d2d" CornerRadius="8" Padding="15" BorderThickness="1" BorderBrush="#3d3d3d">
+                    <StackPanel Orientation="Vertical" Gap="10">
+                        <TextBlock Text="Server Setup" FontWeight="Bold" FontSize="14"/>
+                        <Button Content="Download Server" 
+                                Command="{Binding DownloadServerCommand}"
+                                IsEnabled="{Binding !IsDownloading}"
+                                Background="#667eea"
+                                Padding="10"/>
+                        
+                        <ProgressBar Value="{Binding DownloadProgress}" 
+                                     Maximum="100" 
+                                     Height="6"
+                                     IsVisible="{Binding IsDownloading}"/>
+                        <TextBlock Text="{Binding DownloadProgress, StringFormat=Download Progress: {0}%}" 
+                                   FontSize="12" 
+                                   Foreground="#888"
+                                   IsVisible="{Binding IsDownloading}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Server Control Section -->
+                <Border Background="#2d2d2d" CornerRadius="8" Padding="15" BorderThickness="1" BorderBrush="#3d3d3d">
+                    <StackPanel Orientation="Vertical" Gap="10">
+                        <TextBlock Text="Server Control" FontWeight="Bold" FontSize="14"/>
+                        
+                        <Grid ColumnDefinitions="*,*" Gap="10">
+                            <Button Content="Start All" 
+                                    Command="{Binding StartAllServersCommand}"
+                                    Background="#4caf50"
+                                    Padding="10"/>
+                            <Button Content="Stop All" 
+                                    Command="{Binding StopAllServersCommand}"
+                                    Background="#f44336"
+                                    Padding="10"/>
+                        </Grid>
+
+                        <Separator Background="#3d3d3d" Height="1"/>
+
+                        <!-- Login Server -->
+                        <Grid ColumnDefinitions="*,Auto,Auto" Gap="10">
+                            <TextBlock Text="Login Server" VerticalAlignment="Center"/>
+                            <Button Content="Start" 
+                                    Command="{Binding StartLoginServerCommand}"
+                                    Width="70"
+                                    Background="#4caf50"
+                                    Padding="8"
+                                    IsEnabled="{Binding !LoginServerRunning}"/>
+                            <Button Content="Stop" 
+                                    Command="{Binding StopLoginServerCommand}"
+                                    Width="70"
+                                    Background="#f44336"
+                                    Padding="8"
+                                    IsEnabled="{Binding LoginServerRunning}"/>
+                        </Grid>
+
+                        <!-- Gateway Server -->
+                        <Grid ColumnDefinitions="*,Auto,Auto" Gap="10">
+                            <TextBlock Text="Gateway Server" VerticalAlignment="Center"/>
+                            <Button Content="Start" 
+                                    Command="{Binding StartGatewayServerCommand}"
+                                    Width="70"
+                                    Background="#4caf50"
+                                    Padding="8"
+                                    IsEnabled="{Binding !GatewayServerRunning}"/>
+                            <Button Content="Stop" 
+                                    Command="{Binding StopGatewayServerCommand}"
+                                    Width="70"
+                                    Background="#f44336"
+                                    Padding="8"
+                                    IsEnabled="{Binding GatewayServerRunning}"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Watchdog & Settings -->
+                <Border Background="#2d2d2d" CornerRadius="8" Padding="15" BorderThickness="1" BorderBrush="#3d3d3d">
+                    <StackPanel Orientation="Vertical" Gap="10">
+                        <TextBlock Text="Settings" FontWeight="Bold" FontSize="14"/>
+                        
+                        <Grid ColumnDefinitions="*,Auto" Gap="10">
+                            <TextBlock Text="Auto-Restart on Crash" VerticalAlignment="Center"/>
+                            <ToggleSwitch IsChecked="{Binding WatchdogEnabled}"
+                                         Command="{Binding ToggleWatchdogCommand}"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Web Tools Section -->
+                <Border Background="#2d2d2d" CornerRadius="8" Padding="15" BorderThickness="1" BorderBrush="#3d3d3d">
+                    <StackPanel Orientation="Vertical" Gap="10">
+                        <TextBlock Text="Web Tools" FontWeight="Bold" FontSize="14"/>
+                        
+                        <Button Content="Registration Website" 
+                                Command="{Binding OpenRegistrationWebsiteCommand}"
+                                Background="#2196f3"
+                                Padding="10"/>
+                        <Button Content="Client Manifest" 
+                                Command="{Binding OpenClientManifestCommand}"
+                                Background="#2196f3"
+                                Padding="10"/>
+                        <Button Content="Server Manifest" 
+                                Command="{Binding OpenServerManifestCommand}"
+                                Background="#2196f3"
+                                Padding="10"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- Right Column: Logs -->
+            <Border Background="#2d2d2d" CornerRadius="8" Padding="15" BorderThickness="1" BorderBrush="#3d3d3d">
+                <StackPanel Orientation="Vertical" Gap="10">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Server Logs" FontWeight="Bold" FontSize="14"/>
+                        <Button Content="Clear" 
+                                Command="{Binding ClearLogsCommand}"
+                                Padding="8,4"/>
+                    </Grid>
+
+                    <ListBox ItemsSource="{Binding Logs}"
+                             Background="#1a1a1a"
+                             BorderThickness="1"
+                             BorderBrush="#3d3d3d"
+                             Foreground="#00ff00"
+                             FontFamily="Courier New"
+                             FontSize="11"
+                             Height="400"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Footer Status Bar -->
+        <Border Grid.Row="2" Background="#2d2d2d" CornerRadius="8" Padding="15" BorderThickness="1" BorderBrush="#3d3d3d">
+            <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+                <TextBlock Text="{Binding Status, StringFormat='Status: {0}'}" VerticalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" Gap="15" Grid.Column="1">
+                    <Grid ColumnDefinitions="Auto,Auto" Gap="5">
+                        <Ellipse Width="10" Height="10" 
+                                Fill="{Binding LoginServerRunning, Converter={StaticResource BoolToColorConverter}}"/>
+                        <TextBlock Text="Login" VerticalAlignment="Center" FontSize="12"/>
+                    </Grid>
+                    <Grid ColumnDefinitions="Auto,Auto" Gap="5">
+                        <Ellipse Width="10" Height="10" 
+                                Fill="{Binding GatewayServerRunning, Converter={StaticResource BoolToColorConverter}}"/>
+                        <TextBlock Text="Gateway" VerticalAlignment="Center" FontSize="12"/>
+                    </Grid>
+                </StackPanel>
+                <TextBlock Text="{Binding WatchdogEnabled, StringFormat='Watchdog: {0}'}" 
+                          Grid.Column="2"
+                          VerticalAlignment="Center"
+                          FontSize="12"
+                          Foreground="{Binding WatchdogEnabled, Converter={StaticResource BoolToColorConverter}}"/>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
